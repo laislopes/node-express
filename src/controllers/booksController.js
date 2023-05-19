@@ -61,6 +61,14 @@ class BookController{
             }
         })
     }
+
+    static getByPublishingCompany = (req, res) => {
+        const {publishingCompany} = req.query;
+
+        books.find({'publishingCompany' : publishingCompany}, {}, (error, books) => {
+            res.status(200).send(books);
+        })
+    }
 }
 
 export default BookController;
