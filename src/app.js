@@ -1,14 +1,14 @@
-import express from "express"
-import db from "./config/dbConnect.js"
-import routes from "./routes/index.js"
+import express from "express";
+import db from "./config/dbConnect.js";
+import routes from "./routes/index.js";
 
-db.on("error", console.log.bind(console, 'Connection Error'));
+db.on("error", console.log.bind(console, "Connection Error"));
 db.once("open", () => {
-    console.log('Database connection has been made successfully')
-})
+  console.log("Database connection has been made successfully");
+});
 
 const app = express();
-app.use(express.json())
+app.use(express.json());
 routes(app);
 
-export default app
+export default app;

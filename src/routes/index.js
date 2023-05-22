@@ -3,15 +3,15 @@ import books from "./booksRoutes.js";
 import authors from "./authorsRoutes.js";
 
 const routes = (app) => {
-    app.route('/').get((_,res) => {
-        res.status(200).send({title: "Node Course"})
-    })
+  app.route("/").get((_,res) => {
+    res.status(200).send({title: "Node Course"});
+  });
 
-    app.use(
-        express.json(),
-        books,
-        authors
-    )
+  app.use(
+    express.json(),
+    books,
+    authors
+  );
 };
 
 export default routes;
