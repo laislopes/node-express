@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-mongoose.connect("mongodb+srv://admin:Password123@node-express.nrlzuyg.mongodb.net/BookStore?")
+mongoose.connect(process.env.DB_CONNECTION_STRING)
 
 let db = mongoose.connection;
 
