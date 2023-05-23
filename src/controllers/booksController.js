@@ -1,4 +1,5 @@
 import books from "../models/Book.js";
+import NotFoundError from "../errors/NotFoundError.js";
 
 class BookController{
 
@@ -26,7 +27,7 @@ class BookController{
       if(book !== null){
         res.status(200).send(book);
       }else{
-        res.status(404).send({message: "Book's Id was not found"});
+        next(new NotFoundError("Book's Id was not found"));
       }
     } catch (error) {
       next(error);
