@@ -2,9 +2,9 @@ import BadRequestError from "../errors/BadRequestError.js";
 
 async function pagination(req, res, next){
   try{
-    let { limit = 2, page = 1, ordination = "_id:-1" } = req.query;
+    let { limit = 2, page = 1, sort = "_id:-1" } = req.query;
 
-    let [orderBy, order] = ordination.split(":");
+    let [orderBy, order] = sort.split(":");
 
     limit = parseInt(limit);
     page = parseInt(page);
