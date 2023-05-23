@@ -1,4 +1,4 @@
-import { books } from "../models/index.js";
+import { authors, books } from "../models/index.js";
 import NotFoundError from "../errors/NotFoundError.js";
 
 class BookController{
@@ -80,21 +80,50 @@ class BookController{
     }
   };
 
-  static getByPublishingCompany = async (req, res, next) => {
+  static filter = async (req, res, next) => {
     try {
+      const filter = await this.proccessFilter(req.query);
 
-      const {publishingCompany} = req.query;
+      if(filter !== null){
+        const booksResult = await books
+          .find(filter)
+          .populate("author");
 
-      const booksResult = await books.find({"publishingCompany" : publishingCompany}, {},);
-
-      if(booksResult !== null){
         res.status(200).send(booksResult);
-      }else{
-        next(new NotFoundError(`Books with Publishing Company: ${publishingCompany}, were not found`));
+      } else{
+        res.status(200).send([]);
       }
     } catch (error) {
       next(error);
     }
+  };
+
+  static proccessFilter = async(parameters) => {
+    const { publishingCompany, title, minPages, maxPages, authorName } = parameters;
+  
+    let filter = {};
+  
+    if (publishingCompany) filter.publishingCompany = publishingCompany;
+    if (title) filter.title = { $regex: title, $options: "i" };
+  
+    if (minPages || maxPages) filter.pagesQuantity = {};
+  
+    // gte = Greater Than or Equal 
+    if (minPages) filter.pagesQuantity.$gte = minPages;
+    // lte = Less Than or Equal
+    if (maxPages) filter.pagesQuantity.$lte = maxPages;
+  
+    if (authorName) {
+      const author = await authors.findOne({ name: authorName });
+  
+      if (author !== null) {
+        filter.author = author._id;
+      } else {
+        filter = null;
+      }
+    }
+
+    return filter;
   };
 }
 
