@@ -2,30 +2,33 @@ import authors from "../models/Author.js";
 
 class AuthorController{
 
-  static getAll = async (_, res) => {
+  static getAll = async (_, res, next) => {
     try{
       const authorsResult = await authors.find(); 
 
       res.status(200).json(authorsResult);
     }catch(error){
-      res.status(500).json({message: `${error.message} - Internal Server Error`});
+      next(error);
     }
   };
 
-  static getById = async (req, res) =>{
+  static getById = async (req, res, next) =>{
     try{
       const {id} = req.params;
-
       const author = await authors.findById(id);
 
-      res.status(200).send(author);
+      if(author !== null){
+        res.status(200).send(author);
+      }else{
+        res.status(404).send({message: "Author's Id was not found"});
+      }
+
     }catch(error){
-      res.status(400).send({message: `${error.message} - Book was not found`});
+      next(error);
     }
-    
   };
     
-  static add = async (req, res) => { 
+  static add = async (req, res, next) => { 
     try {
       let author = new authors(req.body);
 
@@ -33,12 +36,12 @@ class AuthorController{
 
       res.status(201).send(author.toJSON());
     } catch (error) {
-      res.status(500).send({message: `${error.message} - error to register a new author`});
+      next(error);
     }
 
   };
 
-  static update = async (req, res) => {
+  static update = async (req, res, next) => {
     try {
       const {id} = req.params;
 
@@ -46,12 +49,12 @@ class AuthorController{
 
       res.status(200).send({message: `The author ${id} has been updated successfully!`});
     } catch (error) {
-      res.status(500).send({message: error.message});
+      next(error);
     }
 
   };
 
-  static delete = async (req, res) =>{
+  static delete = async (req, res, next) =>{
     try {
       const {id} = req.params;
 
@@ -59,7 +62,7 @@ class AuthorController{
 
       res.status(200).send({message: `The author ${id} has been deleted successfully!`});
     } catch (error) {
-      res.status(500).send({message: error.message});
+      next(error);
     }
 
   };

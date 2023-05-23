@@ -2,7 +2,7 @@ import books from "../models/Book.js";
 
 class BookController{
 
-  static getAll = async (_, res) => {
+  static getAll = async (_, res, next) => {
     try {
       const booksResult = await books.find()
         .populate("author")
@@ -10,12 +10,12 @@ class BookController{
 
       res.status(200).json(booksResult);
     } catch (error) {
-      res.status(500).json({message: `${error.message} - Internal Server Error`});
+      next(error);
     }
 
   };
 
-  static getById = async (req, res) =>{
+  static getById = async (req, res, next) =>{
     try {
       const {id} = req.params;
 
@@ -23,13 +23,17 @@ class BookController{
         .populate("author", "name")
         .exec();
 
-      res.status(200).send(book);
+      if(book !== null){
+        res.status(200).send(book);
+      }else{
+        res.status(404).send({message: "Book's Id was not found"});
+      }
     } catch (error) {
-      res.status(400).send({message: `${error.message} - Id ${id} was not found`});
+      next(error);
     }
   };
     
-  static add = async (req, res) => {
+  static add = async (req, res, next) => {
     try {
       let book = new books(req.body);
 
@@ -37,11 +41,11 @@ class BookController{
 
       res.status(201).send(book.toJSON());
     } catch (error) {
-      res.status(500).send({message: `${error.message} - error to register a new book`});
+      next(error);
     }
   };
 
-  static update = async (req, res) => {
+  static update = async (req, res, next) => {
     try {
       const {id} = req.params;
 
@@ -49,11 +53,11 @@ class BookController{
 
       res.status(200).send({message: `The book ${id} has been updated successfully!`});
     } catch (error) {
-      res.status(500).send({message: error.message});
+      next(error);
     }
   };
 
-  static delete = async (req, res) =>{
+  static delete = async (req, res, next) =>{
     try {
       const {id} = req.params;
 
@@ -61,11 +65,11 @@ class BookController{
 
       res.status(200).send({message: `The book ${id} has been deleted successfully!`});
     } catch (error) {
-      res.status(500).send({message: error.message});
+      next(error);
     }
   };
 
-  static getByPublishingCompany = async (req, res) => {
+  static getByPublishingCompany = async (req, res, next) => {
     try {
 
       const {publishingCompany} = req.query;
@@ -74,7 +78,7 @@ class BookController{
 
       res.status(200).send(booksResult);
     } catch (error) {
-      res.status(500).json({message: `${error.message} - Internal Server Error`});
+      next(error);
     }
   };
 }
