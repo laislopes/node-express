@@ -3,13 +3,13 @@ import NotFoundError from "../errors/NotFoundError.js";
 
 class BookController{
 
-  static getAll = async (_, res, next) => {
+  static getAll = async (req, res, next) => {
     try {
-      const booksResult = await books.find()
-        .populate("author")
-        .exec();
+      const searckBooks = books.find();
 
-      res.status(200).json(booksResult);
+      req.result = searckBooks; 
+
+      next();
     } catch (error) {
       next(error);
     }
@@ -85,11 +85,13 @@ class BookController{
       const filter = await this.proccessFilter(req.query);
 
       if(filter !== null){
-        const booksResult = await books
+        const booksResult = books
           .find(filter)
           .populate("author");
 
-        res.status(200).send(booksResult);
+        req.result = booksResult;
+
+        next();
       } else{
         res.status(200).send([]);
       }

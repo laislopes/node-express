@@ -3,11 +3,13 @@ import NotFoundError from "../errors/NotFoundError.js";
 
 class AuthorController{
 
-  static getAll = async (_, res, next) => {
+  static getAll = async (req, res, next) => {
     try{
-      const authorsResult = await authors.find(); 
+      const authorsResult = authors.find(); 
 
-      res.status(200).json(authorsResult);
+      req.result = authorsResult;
+      
+      next();
     }catch(error){
       next(error);
     }

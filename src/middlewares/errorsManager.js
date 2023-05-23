@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import BaseError from "../errors/BaseError.js";
 import InvalidRequest from "../errors/BadRequestError.js";
 import ValidationError from "../errors/ValidationError.js";
-import NotFoundError from "../errors/NotFoundError.js";
 
 // eslint-disable-next-line no-unused-vars
 function errorsManager(error, req, res, next) {
@@ -10,7 +9,7 @@ function errorsManager(error, req, res, next) {
     new InvalidRequest().sendReply(res);
   }else if(error instanceof mongoose.Error.ValidationError){
     new ValidationError(error).sendReply(res);
-  }else if(error instanceof NotFoundError){
+  }else if(error instanceof BaseError){
     error.sendReply(res);
   }
   else{
