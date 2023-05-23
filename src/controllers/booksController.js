@@ -27,7 +27,7 @@ class BookController{
       if(book !== null){
         res.status(200).send(book);
       }else{
-        next(new NotFoundError("Book's Id was not found"));
+        next(new NotFoundError(`Book ${id} was not found`));
       }
     } catch (error) {
       next(error);
@@ -50,9 +50,14 @@ class BookController{
     try {
       const {id} = req.params;
 
-      await books.findByIdAndUpdate(id, {$set: req.body});
+      const bookResult = await books.findByIdAndUpdate(id, {$set: req.body});
 
-      res.status(200).send({message: `The book ${id} has been updated successfully!`});
+      if(bookResult !== null){
+        res.status(200).send({message: `The book ${id} has been updated successfully!`});
+      }else{
+        next(new NotFoundError(`Book ${id} was not found`));
+      }
+
     } catch (error) {
       next(error);
     }
@@ -62,9 +67,14 @@ class BookController{
     try {
       const {id} = req.params;
 
-      await books.findByIdAndDelete(id);
+      const bookResult = await books.findByIdAndDelete(id);
 
-      res.status(200).send({message: `The book ${id} has been deleted successfully!`});
+      if(bookResult !== null){
+        res.status(200).send({message: `The book ${id} has been deleted successfully!`});
+      }else{
+        next(new NotFoundError(`Book ${id} was not found`));
+      }
+
     } catch (error) {
       next(error);
     }
@@ -77,7 +87,11 @@ class BookController{
 
       const booksResult = await books.find({"publishingCompany" : publishingCompany}, {},);
 
-      res.status(200).send(booksResult);
+      if(booksResult !== null){
+        res.status(200).send(booksResult);
+      }else{
+        next(new NotFoundError(`Books with Publishing Company: ${publishingCompany}, were not found`));
+      }
     } catch (error) {
       next(error);
     }

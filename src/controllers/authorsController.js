@@ -21,7 +21,7 @@ class AuthorController{
       if(author !== null){
         res.status(200).send(author);
       }else{
-        next(new NotFoundError("Author's Id was not found"));
+        next(new NotFoundError(`Author ${id} was not found`));
       }
 
     }catch(error){
@@ -46,22 +46,31 @@ class AuthorController{
     try {
       const {id} = req.params;
 
-      await authors.findByIdAndUpdate(id, {$set: req.body});
-
-      res.status(200).send({message: `The author ${id} has been updated successfully!`});
+      const authorResult = await authors.findByIdAndUpdate(id, {$set: req.body});
+      
+      if(authorResult !== null){
+        res.status(200).send({message: `The author ${id} has been updated successfully!`});
+      }else{
+        next(new NotFoundError(`Author ${id} was not found`));
+      }
     } catch (error) {
       next(error);
     }
 
+   
   };
 
   static delete = async (req, res, next) =>{
     try {
       const {id} = req.params;
 
-      await authors.findByIdAndDelete(id);
+      const authorResult = await authors.findByIdAndDelete(id);
 
-      res.status(200).send({message: `The author ${id} has been deleted successfully!`});
+      if(authorResult !== null){
+        res.status(200).send({message: `The author ${id} has been deleted successfully!`});
+      }else{
+        next(new NotFoundError(`Author ${id} was not found`));
+      }
     } catch (error) {
       next(error);
     }
